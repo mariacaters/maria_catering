@@ -1,0 +1,156 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Login</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f4f4;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    padding:20px;
+}
+
+.login-box{
+    width:100%;
+    max-width:400px;
+    background:#fff;
+    padding:35px;
+    border-radius:10px;
+    box-shadow:0 5px 20px rgba(0,0,0,.1);
+}
+
+.logo{
+    display:block;
+    width:90px;
+    margin:0 auto 15px;
+}
+
+h2{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.form-group{
+    margin-bottom:18px;
+}
+
+label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:bold;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:5px;
+    font-size:15px;
+}
+
+button{
+    width:100%;
+    padding:13px;
+    border:none;
+    border-radius:5px;
+    background:#16a34a;
+    color:#fff;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#15803d;
+}
+
+.errorlist{
+    list-style:none;
+    color:#dc2626;
+    margin-bottom:15px;
+}
+
+.error{
+    background:#fee2e2;
+    color:#b91c1c;
+    padding:10px;
+    border-radius:5px;
+    margin-bottom:15px;
+    text-align:center;
+}
+
+.company{
+    text-align:center;
+    color:#555;
+    margin-bottom:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="login-box">
+
+    <img src="{% static 'images/logo.png' %}" class="logo">
+
+    <h2>Maria Catering & Events</h2>
+
+    {% if form.errors %}
+        <div class="error">
+            Invalid username or password.
+        </div>
+    {% endif %}
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <div class="form-group">
+
+            <label>Username</label>
+
+            <input
+                type="text"
+                name="username"
+                required
+                autofocus>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Password</label>
+
+            <input
+                type="password"
+                name="password"
+                required>
+
+        </div>
+
+        <button type="submit">
+            Login
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,726 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Menu Order</title>
+
+<style>
+       *{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f4f4;
+    padding:15px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    background:#fff;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 10px rgba(0,0,0,.1);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.form-row{
+    margin-bottom:15px;
+}
+
+label{
+    display:block;
+    margin-bottom:5px;
+    font-weight:bold;
+}
+
+.form-row input{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:5px;
+    font-size:15px;
+}
+
+.table-wrapper{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+}
+
+th,
+td{
+    border:1px solid #ddd;
+    padding:8px;
+    vertical-align:top;
+}
+
+th{
+    background:#f7f7f7;
+    text-align:left;
+}
+
+.category-input{
+    width:100%;
+    border:none;
+    outline:none;
+    font-size:15px;
+    height: 30px;
+    padding-left:3px;
+}
+
+.item-box{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.item-input-row{
+    display:flex;
+    gap:8px;
+}
+
+.item-input{
+    flex:1;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:5px;
+}
+
+.item-add-btn{
+    width:42px;
+    border:none;
+    background:#2563eb;
+    color:#fff;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:22px;
+}
+
+.item-add-btn:hover{
+    background:#1d4ed8;
+}
+
+.item-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    min-height:15px;
+}
+
+.item-chip{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:#eef2ff;
+    color:black;
+    padding:7px 12px;
+    border-radius:30px;
+    font-size:14px;
+    font-weight:500;
+}
+
+.item-chip button{
+    border:none;
+    background:none;
+    color:#dc2626;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:bold;
+}
+
+.items-hidden{
+    display:none;
+}
+
+.action-cell{
+    width:90px;
+    text-align:center;
+}
+.move-btn{
+    width:35px;
+    height:35px;
+    border:none;
+    border-radius:5px;
+    background:#6b7280;
+    color:#fff;
+    cursor:pointer;
+    margin:2px;
+    font-size:16px;
+}
+
+.move-btn:hover{
+    background:#4b5563;
+}
+
+.remove-btn{
+    width:35px;
+    height:35px;
+    border:none;
+    border-radius:5px;
+    background:#dc2626;
+    color:#fff;
+    cursor:pointer;
+    margin:2px;
+    font-size:18px;
+}
+
+.remove-btn:hover{
+    background:#b91c1c;
+}
+
+.add-category-btn{
+    margin-top:15px;
+    padding:12px 20px;
+    border:none;
+    border-radius:5px;
+    background:#2563eb;
+    color:#fff;
+    cursor:pointer;
+    font-size:15px;
+}
+
+.add-category-btn:hover{
+    background:#1d4ed8;
+}
+
+.save-btn{
+    width:100%;
+    margin-top:15px;
+    padding:14px;
+    border:none;
+    border-radius:5px;
+    background:#16a34a;
+    color:#fff;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:bold;
+}
+
+.save-btn:hover{
+    background:#15803d;
+}
+
+button{
+    transition:.2s;
+}
+
+@media(max-width:768px){
+
+    .container{
+        padding:15px;
+    }
+
+    table,
+    thead,
+    tbody,
+    tr,
+    th,
+    td{
+        display:block;
+        width:100%;
+    }
+
+    thead{
+        display:none;
+    }
+
+    tr.category-row{
+        border:1px solid #ddd;
+        border-radius:8px;
+        margin-bottom:15px;
+        padding:10px;
+        background:#E5F1ED;
+    }
+
+    td{
+        border:none;
+        padding:8px 0;
+    }
+
+    .action-cell{
+        display:flex;
+        gap:8px;
+        justify-content:flex-end;
+        width:100%;
+    }
+
+    .item-input-row{
+        flex-direction:row;
+    }
+
+    .item-input{
+        width:100%;
+    }
+
+    .item-chip{
+        width:100%;
+        justify-content:space-between;
+    }
+
+    .add-category-btn,
+    .save-btn{
+        width:100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Edit Menu Order</h1>
+
+<form method="post">
+
+{% csrf_token %}
+
+<div class="form-row">
+    <label>Event Name</label>
+    <input
+        type="text"
+        name="event_name"
+        value="{{ order.event_name }}"
+        required>
+</div>
+
+<div class="form-row">
+    <label>Event Date</label>
+    <input
+        type="date"
+        name="event_date"
+        value="{{ order.event_date|date:'Y-m-d' }}"
+        required>
+</div>
+
+<div class="form-row">
+    <label>Rate</label>
+    <input
+        type="text"
+        name="rate"
+        value="{{ order.rate }}"
+        required>
+</div>
+
+<div class="table-wrapper">
+
+<table id="menuTable">
+
+<thead>
+<tr>
+    <th width="25%">Category</th>
+    <th width="65%">Items</th>
+    <th width="10%">Actions</th>
+</tr>
+</thead>
+
+<tbody id="categoryBody">
+
+{% for section in sections %}
+
+<tr class="category-row">
+
+<td>
+
+ <input
+    type="text"
+    name="category[]"
+    class="category-input"
+    value="{{ section.category }}"
+    placeholder="Category Name"
+    oninput="updateSuggestions(this)">
+
+</td>
+
+<!-- ITEMS -->
+
+<td>
+
+<div class="item-box">
+
+<div class="item-input-row">
+
+<input
+    type="text"
+    class="item-input"
+    list="menu-items"
+    placeholder="Menu Item"
+    onfocus="updateSuggestions(this)">
+
+<button
+    type="button"
+    class="item-add-btn"
+    onclick="addItem(this)">
++
+</button>
+
+</div>
+
+<div class="item-list">
+
+</div>
+
+<input
+    type="hidden"
+    class="items-hidden"
+    name="items[]"
+    value="{{ section.items }}">
+
+</div>
+
+</td>
+
+<td class="action-cell">
+
+<button
+type="button"
+class="move-btn"
+onclick="moveUp(this)">
+↑
+</button>
+
+<button
+type="button"
+class="move-btn"
+onclick="moveDown(this)">
+↓
+</button>
+
+<button
+type="button"
+class="remove-btn"
+onclick="removeCategory(this)">
+×
+</button>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+<button
+type="button"
+class="add-category-btn"
+onclick="addCategory()">
+
++ Add Category
+
+</button>
+
+<button
+type="submit"
+class="save-btn">
+
+Update Order
+
+</button>
+
+</form>
+
+</div>
+
+<template id="categoryTemplate">
+
+<tr class="category-row">
+
+<td>
+
+<input
+    type="text"
+    class="item-input"
+    list="menu-items"
+    placeholder="Menu Item"
+    onfocus="updateSuggestions(this)">
+
+</td>
+
+<td>
+
+<div class="item-box">
+
+<div class="item-input-row">
+
+<input
+type="text"
+class="item-input"
+placeholder="Menu Item"
+list="menu-items">
+
+<button
+type="button"
+class="item-add-btn"
+onclick="addItem(this)">
++
+</button>
+
+</div>
+
+<div class="item-list">
+
+</div>
+
+<input
+type="hidden"
+name="items[]"
+class="items-hidden">
+
+</div>
+
+</td>
+
+<td class="action-cell">
+
+<button
+type="button"
+class="move-btn"
+onclick="moveUp(this)">
+↑
+</button>
+
+<button
+type="button"
+class="move-btn"
+onclick="moveDown(this)">
+↓
+</button>
+
+<button
+type="button"
+class="remove-btn"
+onclick="removeCategory(this)">
+×
+</button>
+
+</td>
+
+</tr>
+
+</template>
+<datalist id="menu-items"></datalist>
+
+<script src="{% static 'js/menu_items.js' %}"></script>
+<script>
+function addCategory() {
+
+    const template =
+        document.getElementById("categoryTemplate");
+
+    const clone =
+        template.content.cloneNode(true);
+
+    document
+        .getElementById("categoryBody")
+        .appendChild(clone);
+}
+
+
+function addItem(btn) {
+
+    const box = btn.closest(".item-box");
+    const input = box.querySelector(".item-input");
+    const list = box.querySelector(".item-list");
+
+    const value = input.value.trim();
+
+    if (value === "")
+        return;
+
+    const exists = [...list.querySelectorAll(".item-chip span")]
+        .some(span => span.textContent.toLowerCase() === value.toLowerCase());
+
+    if (exists) {
+        input.value = "";
+        input.focus();
+        return;
+    }
+
+    const chip = document.createElement("div");
+    chip.className = "item-chip";
+
+    chip.innerHTML = `
+        <span>${value}</span>
+        <button
+            type="button"
+            onclick="removeItem(this)">
+            ×
+        </button>
+    `;
+
+    list.appendChild(chip);
+
+    updateHidden(box);
+
+    input.value = "";
+    input.focus();
+
+}
+
+
+function removeItem(btn){
+
+    const box = btn.closest(".item-box");
+
+    btn.parentElement.remove();
+
+    updateHidden(box);
+
+}
+
+
+function updateHidden(box){
+
+    const hidden =
+        box.querySelector(".items-hidden");
+
+    const items = [];
+
+    box.querySelectorAll(".item-chip span")
+        .forEach(function(span){
+
+            items.push(span.textContent);
+
+        });
+
+    hidden.value = items.join("\n");
+
+}
+
+
+function removeCategory(btn){
+
+    const rows =
+        document.querySelectorAll(".category-row");
+
+    if(rows.length === 1){
+
+        alert("At least one category is required.");
+
+        return;
+
+    }
+
+    btn.closest(".category-row").remove();
+
+}
+
+
+function moveUp(btn){
+
+    const row = btn.closest(".category-row");
+
+    const prev = row.previousElementSibling;
+
+    if(prev){
+
+        row.parentNode.insertBefore(row, prev);
+
+    }
+
+}
+
+
+function moveDown(btn){
+
+    const row = btn.closest(".category-row");
+
+    const next = row.nextElementSibling;
+
+    if(next){
+
+        row.parentNode.insertBefore(next, row);
+
+    }
+
+}
+
+
+// Enter key adds item
+document.addEventListener("keydown", function(e){
+
+    if(
+        e.target.classList.contains("item-input")
+        &&
+        e.key === "Enter"
+    ){
+
+        e.preventDefault();
+
+        addItem(
+            e.target.parentElement.querySelector(".item-add-btn")
+        );
+
+    }
+
+});
+
+
+// Load existing items
+window.addEventListener("DOMContentLoaded", function(){
+
+    document.querySelectorAll(".item-box")
+        .forEach(function(box){
+
+            const hidden =
+                box.querySelector(".items-hidden");
+
+            const list =
+                box.querySelector(".item-list");
+
+            if(hidden.value.trim() === "")
+                return;
+
+            hidden.value
+                .split("\n")
+                .forEach(function(item){
+
+                    item = item.trim();
+
+                    if(item === "")
+                        return;
+
+                    const chip =
+                        document.createElement("div");
+
+                    chip.className = "item-chip";
+
+                    chip.innerHTML = `
+                        <span>${item}</span>
+                        <button
+                            type="button"
+                            onclick="removeItem(this)">
+                            ×
+                        </button>
+                    `;
+
+                    list.appendChild(chip);
+
+                });
+
+        });
+
+});
+</script>
+
+</body>
+</html>
